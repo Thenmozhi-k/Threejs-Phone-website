@@ -1,13 +1,18 @@
 
 import './App.css'
+import Hero from './components/Hero'
+import Highlights from './components/Highlights'
+import Nav from './components/Nav'
 
 function App() {
   
 
   return (
-    <>
-     <h1>hello</h1>
-    </>
+    <main className='bg-black'>
+     <Nav/>
+     <Hero/>
+     <Highlights/>
+    </main>
   )
 }
 
