@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { hightlightsSlides } from '../constants'
 import gsap from 'gsap'
 import { pauseImg, playImg, replayImg } from '../utils';
+import { useGSAP } from '@gsap/react';
 
 const VideoCarousel = () => {
     const videoRef = useRef([]);
@@ -19,6 +20,10 @@ const VideoCarousel = () => {
     const [loaderData, setLoaderData] = useState([]);
 
     const { isEnd, isLastVideo, startPlay, videoId, isPlaying } = video;
+
+    useGSAP(() => {
+      gsap
+    }, [isEnd, videoId])
 
     useEffect(() => {
         if (loaderData.length > 3) {
@@ -44,6 +49,28 @@ const VideoCarousel = () => {
             })
         }
     }, [videoId, startPlay])
+
+    const handleProcess = (type, i) => {
+        switch (type) {
+            case 'video-end':
+                setVideo((preVideo) => ({...prevideo, isEnd:
+                    true, videoId: i +1  }))
+
+            break;
+             case 'video-last':
+                setVideo((pre) => ({...pre, isLastVideo: true}))
+                break;
+             case 'video-reset' :
+                setVideo((pre) => ({...pre, isLastVideo: false, videoId:0}))
+                break;  
+
+                case 'play':
+                    setVideo((pre) => ({...pre, isPlaying: !pre.isPlaying}))
+                    break;
+            default:
+                return video;
+        }
+    }
 
     return (
         <>
@@ -87,7 +114,7 @@ const VideoCarousel = () => {
                     key={i}
                     ref={(el) => (videoDivRef.current[i] = el)}
                     className='mx-2 w-3 h-3 bg-gray-200 rounded-full relative cursor-pointer'>
-                        <span className='absolute h-full w-full rounded-full' ref={(el) => (videoDivRef.current[i] = el)}/>
+                        <span className='absolute h-full w-full rounded-full' ref={(el) => (videoSpanRef.current[i] = el)}/>
 
                         
                     </span>
@@ -98,7 +125,11 @@ const VideoCarousel = () => {
                     !isPlaying ? playImg : pauseImg}
 
                  alt={isLastVideo ? 'replay' :
-                    !isPlaying ? 'play' : 'pause'} />
+                    !isPlaying ? 'play' : 'pause'} 
+                    onClick={isLastVideo ? () => handleProcess('video-reset') : !isPlaying
+                        ? () => handleProcess('play')
+                        : () => handleProcess('pause')
+                    }/>
 
             </button>
 
